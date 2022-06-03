@@ -100,7 +100,7 @@ def venues():
               distinct_venue['venues'].append({
                       "id": venue.id,
                       "name": venue.name,
-                      "phone":  len(upcoming_shows),
+                      "num_upcoming_shows":  len(upcoming_shows),
                   })
           else:
 
@@ -110,7 +110,7 @@ def venues():
               'venues':[{
                 "id": venue.id,
                 "name": venue.name,
-                "phone":  len(upcoming_shows),
+                "num_upcoming_shows":  len(upcoming_shows),
             }]
             })
       else:
