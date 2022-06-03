@@ -202,30 +202,36 @@ def show_venue(venue_id):
     'past_shows':[],
     'upcoming_shows':[],
     "past_shows_count": 1,
-    "upcoming_shows_count": 0,  }
-  data1={
-    "id": 1,
-    "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-    "address": "1015 Folsom Street",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
-    "facebook_link": "https://www.facebook.com/TheMusicalHop",
-    "seeking_talent": True,
-    "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-    "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "past_shows": [{
-      "artist_id": 4,
-      "artist_name": "Guns N Petals",
-      "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-      "start_time": "2019-05-21T21:30:00.000Z"
-    }],
-    "upcoming_shows": [],
-    "past_shows_count": 1,
-    "upcoming_shows_count": 0,
+    "upcoming_shows_count": 0,  
+    }
+  shows = Show.query.filter_by(venue_id=venue.id).all()
+  shows_list = []
+  for show in shows:
+    shows_list.append(show)
+  upcoming_shows = list(filter(lambda x:x.show_time > datetime.now(),shows_list))
+  past_shows = list(filter(lambda x:x.show_time < datetime.now(),shows_list))
+  data['upcoming_shows_count'] = len(upcoming_shows)
+  data['past_shows_count'] = len(past_shows)
+  for show in past_shows:
+    artist = Artist.query.get(show.artist_id)
+    past_show_obj = {
+    "artist_id": show.artist_id,
+    "artist_name": artist.name,
+    "artist_image_link": artist.image_link,
+    "start_time": str(show.show_time)
   }
+    data['past_shows'].append(past_show_obj)
+
+  for show in upcoming_shows:
+    artist = Artist.query.get(show.artist_id)
+    upcoming_show_obj = {
+    "artist_id": show.artist_id,
+    "artist_name": artist.name,
+    "artist_image_link": artist.image_link,
+    "start_time": str(show.show_time)
+  }
+    data['upcoming_shows'].append(upcoming_show_obj)
+
 
   data = data
   return render_template('pages/show_venue.html', venue=data)
