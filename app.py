@@ -362,6 +362,35 @@ def show_artist(artist_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 0,  }
 
+  shows = Show.query.filter_by(venue_id=venue.id).all()
+  shows_list = []
+  for show in shows:
+    shows_list.append(show)
+  upcoming_shows = list(filter(lambda x:x.show_time > datetime.now(),shows_list))
+  past_shows = list(filter(lambda x:x.show_time < datetime.now(),shows_list))
+  data['upcoming_shows_count'] = len(upcoming_shows)
+  data['past_shows_count'] = len(past_shows)
+  for show in past_shows:
+    venue = Venue.query.get(show.venue_id)
+    past_show_obj = {
+    "venue_id": show.venue_id,
+    "venue_name": venue.name,
+    "venue_image_link": venue.image_link,
+    "start_time": str(show.show_time)
+  }
+    data['past_shows'].append(past_show_obj)
+
+  for show in upcoming_shows:
+    venue = Venue.query.get(show.venue_id)
+    upcoming_show_obj = {
+    "venue_id": show.venue_id,
+    "venue_name": venue.name,
+    "venue_image_link": venue.image_link,
+    "start_time": str(show.show_time)
+  }
+    data['upcoming_shows'].append(upcoming_show_obj)
+
+
 
   data1={
     "id": 4,
