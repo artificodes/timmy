@@ -14,7 +14,7 @@ from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy import func
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -157,11 +157,9 @@ def search_venues():
   response={}
   if request.method == 'POST':
     q = request.form['search_term']
-    venues = Venue.query.filter(Venue.name.contains(q))
+    venues = Venue.query.filter(func.lower(Venue.name).contains(func.lower(q)))
     venues_list = []
     for venue in venues:
-      print(q)    
-
       venues_list.append(venue)
     response={
       "count": len(venues_list),
@@ -169,10 +167,10 @@ def search_venues():
       }
     for venue in venues_list:
       venues_obj = {'id':venue.id,'name':venue.name}
-      shows = Show.query.filter_by(id=venue.id)
+      shows = Show.query.filter_by(venue_id=venue.id)
       shows_list = []
       for show in shows:
-        show_list.append(show)
+        shows_list.append(show)
       upcoming_shows = list(filter(lambda x:x.show_time > datetime.now(),shows_list))
       venues_obj['num_upcoming_shows'] = len(upcoming_shows)
       response['data'].append(venues_obj)
