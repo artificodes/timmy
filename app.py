@@ -362,7 +362,7 @@ def show_artist(artist_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 0,  }
 
-  shows = Show.query.filter_by(venue_id=venue.id).all()
+  shows = Show.query.filter_by(artist_id=artist.id).all()
   shows_list = []
   for show in shows:
     shows_list.append(show)
